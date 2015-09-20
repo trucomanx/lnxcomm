@@ -1,7 +1,8 @@
 
 # Uso de la biblioteca LnxComm
 
-Para usar LnxComm solo necesitas la carpeta `com`, en ella se encuentra toda la biblioteca, el resto son ejemplos y documentación.
+Para usar LnxComm solo necesitas la carpeta `com`, en ella se encuentra toda la 
+biblioteca, el resto son ejemplos y documentación.
 
 ## Estructura de directorios
 
@@ -14,7 +15,9 @@ Para usar LnxComm solo necesitas la carpeta `com`, en ella se encuentra toda la 
 
 ## Generar tutorial
 
-Para generar el tutorial entra a una terminal y ubícate en la carpeta donde encuentres el archivo tutorial.sgml. Luego ejecuta el siguiente comando para crear el tutorial en pdf
+Para generar el tutorialm entra a una terminal y ubícate en la carpeta donde 
+encuentres el archivo `tutorial.sgml`. Luego ejecuta el siguiente comando para 
+crear el tutorial en pdf.
 
 	./generapdf.sh
 
