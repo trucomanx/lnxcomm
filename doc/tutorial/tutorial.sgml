@@ -1,0 +1,687 @@
+<!DOCTYPE Book PUBLIC "-//OASIS//DTD DocBook V4.1//EN">
+<book lang="es" id="indice">
+
+  <bookinfo>
+	<title> LnxComm </title>
+	<subtitle> Linux Communication </subtitle>
+	<abstract><para><email>fernando.pujaico.rivera (en) gmail.com</email></para></abstract>
+	<authorgroup>
+		<author>
+			<firstname>Fernando</firstname>
+			<surname>Pujaico Rivera</surname>
+		</author>
+	</authorgroup>
+	<address>fernando.pujaico.rivera (en) gmail.com</address>
+        <copyright>
+		<year>2011</year>
+		<holder><ulink url="http://www.gnu.org/licenses/gpl.html">GPL</ulink></holder>
+	</copyright>
+	<legalnotice>
+		<para>
+		El contenido de este tutorial puede ser usado libremente y bajo los
+		términos de la licencia <ulink url="http://www.gnu.org/licenses/gpl.html">GPL</ulink>.
+		</para>
+	</legalnotice>
+
+
+  </bookinfo> 
+  
+  
+  <chapter id="Introduccion" xreflabel="Introducción">
+	<title>Introducción</title>
+	<para>
+		La biblioteca "Linux Communication" (LnxComm) está diseñada para brindar un apoyo a los
+		programadores que estén relacionados con el diseño y construcción de hardware. 
+		LnxComm nos permite crear una conexión con el puerto serie mediante unas pocas
+		lineas de código.
+	</para>
+	<para>
+		Otra de las ventajas de esta biblioteca es que nos permite crear programas que podrán
+		ser compilados en sistemas operativos GNU-LINUX y WINDOWS brindando así mayor portabilidad 
+		a nuestros programas.
+	<para>
+		La biblioteca está completamente desarrollada en Lenguaje C.
+	</para>
+  </chapter>
+  
+  
+  <chapter id="DescFunciones" xreflabel="Descripción de Funciones">
+	<title>Descripción de funciones</title>
+	
+	<sect1 id="PrevFunciones">
+		<title>Previamente</title>
+		<para>
+		Las funciones cumplen las mismas características tanto como para sistemas operativos GNU-LINUX y WINDOWS.
+		</para>
+	</sect1>
+	
+	<sect1 id="OpenPort" xreflabel="Open_port">
+		<title>Open_Port</title>
+		<para>Función de lectura del puerto.</para>
+		
+		<screen> HANDLE Open_Port(char COMx[]);</screen>
+		<para>	
+			Abre el puerto serie, recibe como parámetro una cadena con el nombre del puerto
+			y devuelve una variable de tipo <emphasis>HANDLE</emphasis> que es el manejador del puerto.
+		</para>
+		<screen>
+ COMx[]:  Es una cadena que contiene el nombre del puerto a abrir, ejemplo.
+		</screen>
+		<para>En Windows:</para>
+		<screen>
+ "COM1"        , "COM2"        , "COM3"        , "COM4"        , ...
+		</screen>
+		<para>En Gnu-Linux:</para>
+		<screen>
+ "/dev/ttyS0"  , "/dev/ttyS1"  , "/dev/ttyS2"  , "/dev/ttyS3"  , ...
+ "/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", ...
+ "/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2", "/dev/ttyACM3", ...
+		</screen>
+		<para>
+		Retorna:  El manejador de Puerto Abierto (variable tipo <emphasis>HANDLE</emphasis>).
+		En caso de error devuelve <emphasis>INVALID_HANDLE_VALUE</emphasis>.
+		</para>
+	</sect1>
+	
+	<sect1 id="GetConfigurePort" xreflabel="Get_Configure_Port">
+		<title>Get_Configure_Port</title>
+		<para> Devuelve configuración actual del puerto serie.</para>
+		
+		<screen> DCB Get_Configure_Port(HANDLE fd); </screen>
+		<para> 
+			Esta función devuelve un variable de tipo <emphasis>DCB</emphasis> con la configuración actual del puerto serie
+			,la función recibe un parámetro de tipo <emphasis>HANDLE</emphasis> que es el manejador devuelto por la función
+			<xref linkend="OpenPort">.
+		</para>
+		<screen>
+ fd     :  Es el manejador del puerto.                               
+		</screen>
+		<para>
+		Retorna: Una estructura <emphasis>DCB</emphasis> con una copia de la configuración actual del puerto serie
+		y carga la variable <emphasis>ERROR_CONFIGURE_PORT</emphasis> con <emphasis>FALSE</emphasis>, en caso de error 
+		carga la variable <emphasis>ERROR_CONFIGURE_PORT</emphasis> con <emphasis>TRUE</emphasis>.
+		</para>
+	</sect1>
+	
+	<sect1 id="ConfigurePort" xreflabel="Configure_Port">
+		<title>Configure_Port</title>
+		<para> Establece la configuración del puerto serie.</para>
+		
+		<screen>
+ DCB Configure_Port(    HANDLE          fd,
+                        unsigned int    BaudRate,
+                        char            CharParity[]);
+
+		</screen>
+		<para>
+			Esta función configura el puerto serie con los parámetros <emphasis>fd</emphasis>,<emphasis>BaudRate</emphasis> y <emphasis>CharParity</emphasis>.
+		</para>
+		<screen>
+ fd        : Es el manejador del puerto serie devuelto por <xref linkend="OpenPort">.
+ BaudRate  : Es la velocidad del puerto serie. (B115200, B19200, B9600, ...)                         
+ CharParity: Indica el número de bits de la transmisión. ("8N1","7E1","7O1","7S1")
+		</screen>
+		<para>
+		Retorna: Una estructura <emphasis>DCB</emphasis> con una copia de la configuración actual del puerto serie
+		y carga la variable <emphasis>ERROR_CONFIGURE_PORT</emphasis> con <emphasis>FALSE</emphasis>, en caso de error 
+		carga la variable <emphasis>ERROR_CONFIGURE_PORT</emphasis> con <emphasis>TRUE</emphasis>.
+		</para>
+	</sect1>
+
+	<sect1 id="SetConfigurePort" xreflabel="Set_Configure_Port">
+		<title>Set_Configure_Port</title>
+		<para> Establece la configuración del puerto serie.</para>
+		
+		<screen>
+ int Set_Configure_Port(        HANDLE  fd,
+                                DCB     PortDCB); 
+		</screen>
+		<para>
+			Restituye/establece la configuración del puerto serie, los parámetros serán pasados mediante
+			una variable tipo <emphasis>DCB</emphasis>.
+		</para>
+		
+		<screen>
+ fd     : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+ newtio : Es una variable DCB con la configuración del puerto, generalmente 
+          se usa la devuelta por la función <xref linkend="GetConfigurePort">
+		</screen>
+		<para>Retorna: <emphasis>TRUE</emphasis> si todo fue bien o <emphasis>FALSE</emphasis> si hubo algún error.</para>
+	</sect1>
+
+	<sect1 id="WritePort" xreflabel="Write_Port">
+		<title>Write_Port</title>
+		<para>Escribe un bloque de datos tipo <emphasis>char</emphasis> en el puerto serie.</para>
+		<screen>
+ long Write_Port(       HANDLE  fd,
+                        char    Data[],
+                        int     SizeData);
+		</screen>
+		<para>
+			Escribe los <emphasis>SizeData</emphasis> primeros caracteres de <emphasis>Data</emphasis>.
+		</para>
+		<warning>
+			<para>
+			Se debe escoger un <emphasis>SizeData</emphasis> menor o igual 
+			que la longitud de <emphasis>Data</emphasis>.
+			</para>
+		</warning>
+
+		<screen>                                                          
+ fd	 : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+ Data	 : Es el dato a mandar.
+ SizeData: Es el número de bytes que se quieren escribir.
+		</screen>
+		<para>
+		 Retorna : En caso de éxito devuelve el número de bytes escritos 
+		(cero indica que no se ha escrito nada). En GNU-LINUX en caso de error 
+		devuelve -1.
+		</para>
+	</sect1>
+
+	<sect1 id="ReadPort" xreflabel="Read_Port">
+		<title>Read_Port</title>
+		<para>Recibe un bloque de datos en el puerto serie.</para>
+		<screen>
+ long Read_Port(        HANDLE  fd,
+                        char    *Data,
+                        int     SizeData);
+		</screen>
+		<para>
+			Lee los <emphasis>SizeData</emphasis> primeros caracteres del puerto y lo carga en
+			<emphasis>Data</emphasis>.
+		</para>
+		<warning>
+			<para>
+			Se debe escoger un <emphasis>SizeData</emphasis> menor o igual 
+			que la longitud de <emphasis>Data</emphasis>.
+			</para>
+		</warning>
+		<screen>                                                          
+ fd	 : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+ Data	 : Es la variable en donde se reciben los datos.
+ SizeData: Es el número de bytes que se desea recibir.
+		</screen>
+		<para>
+		 Retorna : En caso de éxito devuelve el número de bytes leídos 
+		(cero indica que no se ha leído nada). En GNU-LINUX en caso de error 
+		devuelve -1.
+		</para>
+	</sect1>
+	<sect1 id="GetsPort" xreflabel="Gets_Port">
+		<title>Gets_Port</title>
+		<para>Recibe una cadena de caracteres tipo <emphasis>char</emphasis> por el puerto serie.</para>
+		<screen>
+ long Gets_Port(        HANDLE  fd,
+                        char    *Data,
+                        int     SizeData);
+		</screen>
+		<para> 
+			Recibe datos por el puerto, lee hasta encontrar un 0x0A,0x0D o hasta completar
+			<emphasis>SizeData</emphasis> caracteres. Los datos son guardados en la variable
+			<emphasis>Data</emphasis>
+		</para>
+		<warning>
+			<para>
+			Se debe escoger un <emphasis>SizeData</emphasis> menor o igual 
+			que la longitud de <emphasis>Data</emphasis>.
+			</para>
+		</warning>
+		<screen>
+ fd      : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+ Data    : Es la variable en donde se reciben los datos.
+ SizeData: Es el máximo número de bytes que se desea recibir.
+		</screen>
+		<para> 
+		Retorna : El número de caracteres recibidos, estos números 
+		serán siempre mayores o iguales a cero.
+		</para>
+	</sect1>
+	<sect1 id="GetcPort" xreflabel="Getc_Port">
+		<title>Getc_Port</title>
+		<para>Recibe un caracter por el puerto serie.</para>
+		<screen>
+ long Getc_Port(        HANDLE  fd,
+                        char    *Data);
+		</screen>
+		<para>
+			Recibe un único caracter por el puerto y es cargado en la variable <emphasis>Data</emphasis>
+			de tamaño 1 byte.
+		</para>
+		<screen>
+ fd     : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+ Data   : Es la variable en donde se reciben los datos(1 Byte).
+		</screen>
+		<para>
+		Retorna : En caso de éxito devuelve el número de bytes leídos. 
+		En GNU-LINUX en caso de error devuelve -1.
+		</para>
+	</sect1>
+
+	<sect1 id="KbhitPort" xreflabel="Kbhit_Port">
+		<title>Kbhit_Port</title>
+		<para>Indica el número de bytes en el buffer de entrada del puerto serie.</para>
+		<screen>
+ int Kbhit_Port(	HANDLE fd);
+		</screen>
+		<para>	Recibe como parámetro el manejador del puerto. </para>
+		<screen>
+ fd     : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+		</screen>
+		<para> Retorna: El número de caracteres en el buffer de entrada.</para>
+	</sect1>
+
+	<sect1 id="ClosePort" xreflabel="Close_Port">
+		<title>Close_Port</title>
+		<para>Cierra el puerto serie.</para>
+		<screen>
+ int Close_Port(	HANDLE fd); 
+		</screen>
+		<para>
+		Recibe la variable <emphasis>fd</emphasis> y cierra el puerto serie.
+		</para>
+		<screen>
+ fd     : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+		</screen>
+		<para> 
+		Retorna: <emphasis>TRUE</emphasis> si se ha cerrado el puerto 
+		y <emphasis>FALSE</emphasis> en el caso contrario. 
+		</para>
+	</sect1>
+
+	<sect1 id="SetHandsHaking" xreflabel="Set_Hands_Haking">
+		<title>Set_Hands_Haking</title>
+		<para>Configura el control de flujo en el puerto serie.</para>
+		<screen>
+ int Set_Hands_Haking(  HANDLE  fd,
+                        int     FlowControl); 
+		</screen>
+		<para> Recibe como variables el manejador del puerto serie y el tipo de control de flujo.</para>
+		<screen>
+ fd         : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+ FlowControl: Es un número entero que indica el tipo de control de flujo.
+                0    Ninguno
+                1    RTSCTS
+                2    XonXoff
+                3    DTRDSR
+		</screen>
+		<para> Retorna : <emphasis>TRUE</emphasis> si todo fue bien y <emphasis>FALSE</emphasis> si no lo fue.</para>
+	</sect1>
+
+	<sect1 id="SetBaudRate" xreflabel="Set_BaudRate">
+		<title>Set_BaudRate</title>
+		<para>Configura la  velocidad en baudios del puerto serie.</para>
+		<screen>
+ int Set_BaudRate(      HANDLE fd,
+                        unsigned int BaudRate);
+		</screen>
+		<para>Recibe como datos el manejador del puerto y la velocidad en baudios del mismo.</para>
+		<screen>
+ fd      : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+ BaudRate: Es la velocidad del puerto, los valores pueden ser.
+                B2400
+                B9600
+                B19200
+                B115200
+        Para mas datos vea el archivo baudios.h .
+		</screen>
+		<para> Retorna: <emphasis>TRUE</emphasis> si todo fue bien y <emphasis>FALSE</emphasis> si no lo fue.</para>
+	</sect1>
+
+	<sect1 id="SetTime" xreflabel="Set_Time">
+		<title>Set_Time</title>
+		<para>Configura temporizador para las funciones de lectura y escritura en el puerto serie.</para>
+		<screen>
+ int Set_Time(  HANDLE          fd,
+                unsigned int    Time);
+		</screen>
+		<para> 
+		Recibe como variables, el manejador del puerto y el máximo tiempo entre bytes en milisegundos (ms) 
+		</para>
+		<screen>
+ fd     : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+ Time   : Multiplicador, para el tamaño total del TimeOut en la 
+          lectura y escritura de datos.
+
+        TimeOut = (100 * Time * numero_de_bytes_en_la_lectura) ms
+		</screen>
+		<para> Retorna: <emphasis>TRUE</emphasis> si todo fue bien y <emphasis>FALSE</emphasis> si no lo fue.</para>
+	</sect1>
+
+	<sect1 id="IOBlocking" xreflabel="IO_Blocking">
+		<title>IO_Blocking</title>
+		<para>Escoge entre el modo bloqueante y no bloqueante en lectura de datos en el puerto serie.</para>
+		<screen>
+ int IO_Blocking(       HANDLE fd,
+                        int Modo);
+		</screen>
+		<para>
+			La función recibe como parámetro el manejador del puerto y <emphasis>TRUE</emphasis> si se quiere una
+			lectura de datos bloqueante o <emphasis>FALSE</emphasis> si no.
+		</para>
+		<screen>
+ fd     : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+ Modo   : TRUE : Modo bloqueante.
+          FALSE: Modo no bloqueante.
+		</screen>
+		<para> Retorna: <emphasis>TRUE</emphasis> si todo fue bien y <emphasis>FALSE</emphasis> si no lo fue.</para>
+	</sect1>
+
+	<sect1 id="CleanBuffer" xreflabel="Clean_Buffer">
+		<title>Clean_Buffer</title>
+		<para>
+		Termina las operaciones de lectura y escritura pendientes y limpia 
+		las colas de recepción y de transmisión en el puerto serie.</para>
+		<screen>
+ int Clean_Buffer(      HANDLE fd);
+		</screen>
+		<para>
+			La función recibe como parámetro el manejador del puerto.
+		</para>
+		<screen>
+fd     : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+		</screen>
+		<para> Retorna: <emphasis>TRUE</emphasis> si todo fue bien y <emphasis>FALSE</emphasis> si no lo fue.</para>
+	</sect1>	
+
+	<sect1 id="CreateThreadPort" xreflabel="Create_Thread_Port">
+		<title>Create_Thread_Port</title>
+		<para>
+		Crea una función (hilo) que se ejecuta cuando existan caracteres en el buffer de
+		entrada del puerto serie.
+		</para>
+		<screen>
+ pthread_t Create_Thread_Port(  HANDLE *fd);
+		</screen>
+		<para>
+		Recibe como parametro el manejador del puerto. y devuelve una variable de tipo 
+		<emphasis>pthread_t</emphasis>
+		</para>
+		<screen>
+ fd     : Es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+		</screen>
+		<para> Retorna: El manejador del hilo creado.</para>
+		<para>
+		Para poder usar la función <xref linkend="CreateThreadPort"> primero se debe de habilitar
+		escribiendo lo siguiente: <emphasis>#define ENABLE_SERIAL_PORT_EVENT</emphasis>,
+		luego se debe de escribir el código de la función <emphasis>SERIAL_PORT_EVENT(HANDLE *hPort)</emphasis>
+		</para>
+		<screen>
+ #define ENABLE_SERIAL_PORT_EVENT
+ 
+ #include "com/serial.h"
+ 
+ void SERIAL_PORT_EVENT(        HANDLE *hPort)
+ {
+        // Código de ejemplo aquí 
+        // char   Data[16]; 
+        // Read_Port(*hPort,Data,15);
+        // Data[15]=0;
+        // printf("%s",Data);
+ }
+		</screen>
+		<para>
+		La función <emphasis>SERIAL_PORT_EVENT</emphasis> recibe como parámetro un puntero de tipo HANDLE
+		que es el manejador del puerto devuelto por <xref linkend="OpenPort">.
+		</para>
+	</sect1>
+  </chapter>
+  
+
+  <chapter id="Ejemplos" xreflabel="Ejemplos">
+	<title>Ejemplos</title>
+	<para>
+		Para escribir tus programas puedes escoger cuatro métodos bloqueante, no-bloqueante, time-out y evento.
+	</para>
+	<sect1 id="EjemPreviamente" xreflabel="EjemPreviamente">
+		<title>Previamente</title>
+		<para> La cabecera cambia según el sistema operativo.</para>
+		<screen>
+                Linux:
+                
+                #define __LINUX_COM__
+                #include "com/serial.h"
+
+                Windows:
+
+                #define __WINDOWS_COM__ 
+                #include "com/serial.h"
+		</screen>
+		<para>
+		El uso de las comillas dobles (<emphasis>"com/serial.h"</emphasis>) indica que la carpeta
+		<emphasis>com</emphasis> se encuentra en la misma carpeta del archivo
+		de código fuente que la invoca, osea si se tiene un archivo <emphasis>ejemplo.c</emphasis>
+		que usa <emphasis>"com/serial.h"</emphasis>, la carpeta <emphasis>com</emphasis> se
+		debe de encontrar en la misma carpeta de <emphasis>ejemplo.c</emphasis>.
+		</para>
+		<para>La función Open_Port también cambiara de argumento según el sistema operativo.</para>
+		<screen>
+                Linux:
+ 
+                "/dev/ttyS0"  , "/dev/ttyS1"  , ...
+                "/dev/ttyUSB0", "/dev/ttyUSB1", ...
+                "/dev/ttyACM0", "/dev/ttyACM1", ...
+
+                Windows:
+
+                "COM1", "COM2, "COM3", ...
+		</screen>
+		<para>
+		Si se esta usando linux como sistema operativo la compilación de los programas que se
+		realicen se hará de la siguiente manera:
+		</para>
+		<screen> gcc -o archivo archivo.c </screen>
+		<para>En el caso de que se esté creando un hilo se deberá compilar de la siguiente manera.</para>
+		<screen> gcc -o archivo archivo.c -lpthread </screen>
+	</sect1>
+	
+	<sect1 id="Bloqueante" xreflabel="Bloqueante">
+		<title>Bloqueante</title>
+		<para><ulink url="../../bloqueante.c">Aquí</ulink> se tiene un ejemplo de un programa bloqueante.</para>
+				
+		<screen>
+#define __LINUX_COM__                   // #define __WINDOWS_COM__
+
+#include "com/serial.h"
+
+int main()
+{
+    HANDLE fd; 
+    DCB OldConf;
+    char cad[16]="Enviando Texto";
+    int n;
+    
+    fd=Open_Port("/dev/ttyS0");         // Abre el puerto serie.
+                                        // fd=Open_Port("COM1"); 
+    
+    OldConf=Get_Configure_Port(fd);     // Guardo la configuración del puerto.
+    
+    Configure_Port(fd,B115200,"8N1");   // Configuro el puerto serie.
+    
+                                        // Bloqueante por defecto, pero también
+                                        // se puede usar:
+                                        // IO_Blocking(fd,TRUE); 
+    
+    n=Write_Port(fd,cad,16);            // Escribo en el puerto serie.
+    
+    while(Kbhit_Port(fd)<16);           // Espero a leer hasta que se tengan
+                                        // 16 bytes en el buffer de entrada.
+
+    n=Read_Port(fd,cad,16);             // Leo el puerto serie.
+    printf("%s",cad);                   // Muestro los datos.
+    
+    Set_Configure_Port(fd,OldConf);     // Restituyo la antigua configuración 
+                                        // del puerto.
+
+    Close_Port(fd);                     // Cierro el puerto serie.
+    
+    printf("\nPresione ENTER para terminar\n");
+    getchar();
+    
+    return 0;
+}
+		</screen>
+	</sect1>
+	
+	<sect1 id="NoBloqueante" xreflabel="No-Bloqueante">
+		<title>No-Bloqueante</title>
+		<para><ulink url="../../nobloqueante.c">Aquí</ulink> se tiene un ejemplo de un programa no-bloqueante.</para>
+		<screen>
+#define __WINDOWS_COM__                 // #define __LINUX_COM__ 
+
+#include "com/serial.h"
+
+int main()
+{
+    HANDLE fd; 
+    DCB OldConf;
+    char cad[16]="Enviando Texto";
+    int n;
+    
+    fd=Open_Port("COM1");               // Abre el puerto serie.
+                                        // fd=Open_Port("/dev/ttyS0"); 
+    
+    OldConf=Get_Configure_Port(fd);     // Guardo la configuración del puerto.
+    
+    Configure_Port(fd,B115200,"8N1");   // Configuro el puerto serie.
+    
+    IO_Blocking(fd,FALSE);              // Seleccionamos lectura no bloqueante.
+    
+    n=Write_Port(fd,cad,16);            // Escribo en el puerto serie.
+    
+    while(Kbhit_Port(fd)<16);           // Espero a leer hasta que se tengan
+                                        // 16 bytes en el buffer de entrada.
+
+    n=Read_Port(fd,cad,16);             // Leo el puerto serie.
+    printf("%s",cad);                   // Muestro loas datos.
+
+    
+    Set_Configure_Port(fd,OldConf);     // Restituyo la antigua configuración 
+                                        // del puerto.
+
+    Close_Port(fd);                     // Cierro el puerto serie.
+    
+    printf("\nPresione ENTER para terminar\n");
+    getchar();
+    
+    return 0;
+}
+		</screen>
+	</sect1>
+	
+	<sect1 id="TimeOut" xreflabel="TimeOut">
+		<title>Timeout</title>
+		<para><ulink url="../../timeout.c">Aquí</ulink> se tiene un ejemplo de un programa con Time-Out.</para>
+		<screen>
+#define __WINDOWS_COM__                 // #define __LINUX_COM__ 
+
+#include "com/serial.h"
+
+int main()
+{
+    HANDLE fd; 
+    DCB OldConf;
+    char cad[16]="X";
+    int n,TIME=2,i;
+
+    fd=Open_Port("COM1");               // Abre el puerto serie.
+                                        // fd=Open_Port("/dev/ttyS0");
+
+    OldConf=Get_Configure_Port(fd);     // Guardo la configuración del puerto.
+
+    Configure_Port(fd,B19200,"8N1");    // Configuro el puerto serie.
+
+    Set_Time(fd,TIME);                  // Time-Out entre caracteres es TIME*0.1.
+
+    n=Write_Port(fd,cad,1);             // Escribo en el puerto serie.
+
+    n=Gets_Port(fd,cad,16);             // Leo el puerto serie.
+    printf("%s",cad);                   // Muestro la cadena.
+
+    Set_Configure_Port(fd,OldConf);     // Restituyo la antigua configuración 
+                                        // del puerto.
+    Close_Port(fd);                     // Cierro el puerto serie.
+
+    printf("\nPresione ENTER para terminar\n");
+    getchar();
+
+    return 0;
+}
+		</screen>
+	</sect1>
+	
+	<sect1 id="Evento" xreflabel="Evento">
+		<title>Evento</title>
+		<para><ulink url="../../evento.c">Aquí</ulink> se tiene un ejemplo de un programa con evento.</para>
+		<screen>
+#define __WINDOWS_COM__                 // #define __LINUX_COM__ 
+#define ENABLE_SERIAL_PORT_EVENT
+
+#include "com/serial.h"
+
+int numero=0; 
+void SERIAL_PORT_EVENT(HANDLE * hPort)
+{
+    char c;
+    Getc_Port(*hPort,&amp c);
+    printf("[%d]=%c\n",numero,c); 
+    numero++;
+}
+
+int main()
+{
+    HANDLE fd; 
+    DCB OldConf;
+    char cad[16]="Enviando Texto\n";
+    int n;
+    
+    fd=Open_Port("COM1");               // Abre el puerto serie.
+                                        // fd=Open_Port("/dev/ttyS0"); 
+    
+    OldConf=Get_Configure_Port(fd);     // Guardo la configuración del puerto.
+    
+    Configure_Port(fd,B115200,"8N1");   // Configuro el puerto serie.
+    
+    IO_Blocking(fd,TRUE);               // Bloqueante por defecto, pero también
+                                        // se puede usar:
+                                        // IO_Blocking(fd,TRUE); 
+    
+    n=Write_Port(fd,cad,16);            // Escribo en el puerto serie.
+    
+    Create_Thread_Port(&amp fd);        // Creo un hilo y le paso el manejador.
+
+    while(TRUE);
+    
+    Set_Configure_Port(fd,OldConf);     // Restituyo la antigua configuración 
+                                        // del puerto.
+
+    Close_Port(fd);                     // Cierro el puerto serie.
+    
+    printf("\nPresione ENTER para terminar\n");
+    getchar();
+    
+    return 0;
+}
+		</screen>
+	</sect1>
+	
+  </chapter>  
+  <chapter id="Referencias" xreflabel="Referencias">
+	<title>Referencias</title>
+	<itemizedlist>
+		<listitem>
+			<para><ulink url="http://lnxcomm.sf.net">http://lnxcomm.sourceforge.net</ulink></para>
+		</listitem>
+		<listitem>
+			<para><ulink url="http://zsoluciones.com">http://zsoluciones.com</ulink></para>
+		</listitem>
+		<listitem>
+			<para><ulink url="http://winapi.conclase.net">http://winapi.conclase.net</ulink></para>
+		</listitem>
+		<listitem>
+			<para><ulink url="http://google.com"><acronym>http://google.com</acronym></ulink></para>
+		</listitem>
+	</itemizedlist>  
+	
+  </chapter>  
+</book>
